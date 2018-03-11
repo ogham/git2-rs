@@ -141,6 +141,20 @@ fn main() {
         }
     }
 
+    /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    This block has been commented out (even the comments) to avoid triggering
+    this bug in exa: https://github.com/ogham/exa/issues/194
+
+    Basically, exa doesn't even use any of the networking capabilities of libgit2,
+    and by using none of this library's Cargo features, it can avoid compiling
+    most of them in to the binary. However, libhttp_parser still gets included.
+    Even if it's never actually called, the binary will still refuse to run on
+    systems where the shared library isn't installed.
+
+    To "fix" this, exa uses a modified version of git2-rs with this block
+    removed, so it doesn't tell rustc to link to http_parser. This is a stupid
+    hack and should be removed as soon as possible.
+
     // libgit2 requires the http_parser library for the HTTP transport to be
     // implemented, and it will attempt to use the system http_parser if it's
     // available. Detect this situation and report using the system http parser
@@ -157,6 +171,7 @@ fn main() {
             println!("cargo:rustc-link-lib=http_parser");
         }
     }
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 
     if target.contains("windows") {
         println!("cargo:rustc-link-lib=winhttp");
